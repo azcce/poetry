@@ -79,60 +79,259 @@
 </head>
 <body>
     <div class="container py-3">
-        <!-- 顶部标题 -->
-        <div class="d-flex justify-content-between align-items-center">
-            <h1 class="fs-2 fw-bold" style="color: #2d3e50;">📚 小诗人</h1>
-            <span class="badge bg-warning text-dark p-2">今日学习 3首</span>
-        </div>
+    <!-- 在 <div class="container py-3"> 内部，按照以下顺序组织 -->
 
-        <!-- 搜索框：实现查询、检索功能 -->
-        <div class="search-box d-flex align-items-center">
-            <i class="bi bi-search me-2" style="color: #aaa;"></i>
-            <input type="text" id="searchInput" class="form-control-plaintext" placeholder="搜索诗词、作者...">
-            <button class="btn btn-sm" id="clearSearch" style="display: none;"><i class="bi bi-x-lg"></i></button>
-        </div>
+<!-- 顶部标题和搜索框保持不变 -->
+<div class="d-flex justify-content-between align-items-center">
+    <h1 class="fs-2 fw-bold" style="color: #2d3e50;">📚 小诗人</h1>
+    <span class="badge bg-warning text-dark p-2">今日学习 3首</span>
+</div>
 
-        <!-- 分类标签（智能筛选雏形） -->
-        <div class="d-flex overflow-auto py-2 mb-2" style="gap: 10px; white-space: nowrap;">
-            <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('all')">📋 全部</span>
-            <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('唐')">📜 唐诗</span>
-            <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('宋')">🍃 宋词</span>
-            <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('李白')">🌟 李白</span>
-            <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('思乡')">🏠 思乡</span>
-        </div>
+<!-- 搜索框（放在所有板块外面，因为搜索是全局的） -->
+<div class="search-box d-flex align-items-center">
+    <i class="bi bi-search me-2" style="color: #aaa;"></i>
+    <input type="text" id="searchInput" class="form-control-plaintext" placeholder="搜索诗词、作者...">
+    <button class="btn btn-sm" id="clearSearch" style="display: none;"><i class="bi bi-x-lg"></i></button>
+</div>
 
-        <!-- 诗词卡片列表会动态显示在这里 -->
-        <div id="poemList"></div>
+<!-- 分类标签（也是全局的，可以放在外面） -->
+<div class="d-flex overflow-auto py-2 mb-2" style="gap: 10px; white-space: nowrap;">
+    <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('all')">📋 全部</span>
+    <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('唐')">📜 唐诗</span>
+    <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('宋')">🍃 宋词</span>
+    <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('李白')">🌟 李白</span>
+    <span class="badge bg-secondary bg-opacity-10 text-dark p-3 rounded-pill" style="font-size: 0.9rem;" onclick="filterByTag('思乡')">🏠 思乡</span>
+</div>
 
-        <!-- 底部导航（模拟APP） -->
-        <div class="nav-bar">
-            <div class="row text-center">
-                <div class="col-3"><i class="bi bi-house-door-fill" style="color: #2d3e50;"></i><br><small>首页</small></div>
-                <div class="col-3"><i class="bi bi-mic"></i><br><small>跟读</small></div>
-                <div class="col-3"><i class="bi bi-bar-chart"></i><br><small>学习小结</small></div>
-                <div class="col-3"><i class="bi bi-person"></i><br><small>我的</small></div>
+<!-- ========== 四个内容板块 ========== -->
+<!-- 板块1：首页（显示诗词列表） -->
+<div id="pageHome" class="page">
+    <div id="poemList"></div>
+</div>
+
+<!-- 板块2：跟读练习（显示跟读专用界面） -->
+
+
+<div id="pagePractice" class="page" style="display: none;">
+    <div class="card" style="border-radius: 20px;">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-mic display-1 text-primary"></i>
+            <h3 class="mt-3">跟读练习</h3>
+            <p class="text-muted">选择一个句子，跟着朗读吧！</p>
+            <div id="practiceSentence" class="p-3 bg-light rounded mb-3">
+                <p class="fs-4">床前明月光</p>
             </div>
+            <button class="btn btn-primary btn-lg rounded-pill px-5" onclick="startPracticeFromNav()">
+                <i class="bi bi-mic"></i> 开始跟读
+            </button>
+            <p class="mt-3 small text-muted">点击按钮后，请允许麦克风权限</p>
         </div>
     </div>
+</div>
+
+<!-- 板块3：学习小结（显示统计卡片） -->
+<div id="pageSummary" class="page" style="display: none;">
+    <div class="card" style="border-radius: 20px; background: #e8f0fe;">
+        <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-bar-chart-line me-2"></i>本周学习小结</h5>
+            <div class="row mt-3">
+                <div class="col-4 text-center">
+                    <div class="h3 text-primary" id="statLearned">7</div>
+                    <small>已学诗词</small>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="h3 text-success" id="statPracticed">32</div>
+                    <small>跟读次数</small>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="h3 text-warning" id="statAccuracy">85%</div>
+                    <small>平均准确率</small>
+                </div>
+            </div>
+            <div class="progress mt-3" style="height: 10px;">
+                <div class="progress-bar bg-success" style="width: 70%;" id="progressBar">本月进度 70%</div>
+            </div>
+            <p class="text-muted mt-2 mb-0 small" id="recommendText">推荐继续学习：《望庐山瀑布》《绝句》</p>
+        </div>
+    </div>
+    
+    <!-- 可以添加更多历史记录 -->
+    <div class="card mt-3">
+        <div class="card-header bg-transparent">📖 最近学习</div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between">
+                <span>静夜思</span>
+                <span class="text-success">已完成</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span>春晓</span>
+                <span class="text-success">已完成</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span>登鹳雀楼</span>
+                <span class="text-warning">进行中</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- 板块4：我的（个人信息和设置） -->
+<div id="pageProfile" class="page" style="display: none;">
+    <div class="card text-center">
+        <div class="card-body">
+            <i class="bi bi-person-circle display-1 text-secondary"></i>
+            <h4 class="mt-2">小学员</h4>
+            <p class="text-muted">累计学习 15 天</p>
+            <hr>
+            <div class="d-flex justify-content-between">
+                <span><i class="bi bi-star-fill text-warning"></i> 积分</span>
+                <span>128</span>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <span><i class="bi bi-trophy-fill text-warning"></i> 成就</span>
+                <span>6 枚</span>
+            </div>
+            <hr>
+            <button class="btn btn-outline-secondary w-100 mb-2">设置</button>
+            <button class="btn btn-outline-danger w-100">退出登录</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 底部导航栏（修改为带点击事件） ========== -->
+<div class="nav-bar">
+    <div class="row text-center">
+        <div class="col-3" onclick="switchPage('home')">
+            <i class="bi bi-house-door-fill" id="navHomeIcon"></i><br><small>首页</small>
+        </div>
+        <div class="col-3" onclick="switchPage('practice')">
+            <i class="bi bi-mic" id="navPracticeIcon"></i><br><small>跟读</small>
+        </div>
+        <div class="col-3" onclick="switchPage('summary')">
+            <i class="bi bi-bar-chart" id="navSummaryIcon"></i><br><small>学习小结</small>
+        </div>
+        <div class="col-3" onclick="switchPage('profile')">
+            <i class="bi bi-person" id="navProfileIcon"></i><br><small>我的</small>
+        </div>
+    </div>
+</div>
+
 
     <script>
-        // ---------- 诗词数据库（内置10首，可以随时增加）----------
-        const poems = [
-            { id: 1, title: "静夜思", author: "李白", dynasty: "唐", tags: ["思乡", "月亮"], content: "床前明月光，疑是地上霜。\n举头望明月，低头思故乡。" },
-            { id: 2, title: "春晓", author: "孟浩然", dynasty: "唐", tags: ["春天", "清晨"], content: "春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。" },
-            { id: 3, title: "登鹳雀楼", author: "王之涣", dynasty: "唐", tags: ["励志", "登高"], content: "白日依山尽，黄河入海流。\n欲穷千里目，更上一层楼。" },
-            { id: 4, title: "悯农", author: "李绅", dynasty: "唐", tags: ["节约", "劳动"], content: "锄禾日当午，汗滴禾下土。\n谁知盘中餐，粒粒皆辛苦。" },
-            { id: 5, title: "江雪", author: "柳宗元", dynasty: "唐", tags: ["冬天", "孤独"], content: "千山鸟飞绝，万径人踪灭。\n孤舟蓑笠翁，独钓寒江雪。" },
-            { id: 6, title: "咏鹅", author: "骆宾王", dynasty: "唐", tags: ["动物", "启蒙"], content: "鹅，鹅，鹅，曲项向天歌。\n白毛浮绿水，红掌拨清波。" },
-            { id: 7, title: "赋得古原草送别", author: "白居易", dynasty: "唐", tags: ["励志", "送别"], content: "离离原上草，一岁一枯荣。\n野火烧不尽，春风吹又生。" },
-            { id: 8, title: "望庐山瀑布", author: "李白", dynasty: "唐", tags: ["风景", "壮观"], content: "日照香炉生紫烟，遥看瀑布挂前川。\n飞流直下三千尺，疑是银河落九天。" },
-            { id: 9, title: "绝句", author: "杜甫", dynasty: "唐", tags: ["春天", "风景"], content: "两个黄鹂鸣翠柳，一行白鹭上青天。\n窗含西岭千秋雪，门泊东吴万里船。" },
-            { id: 10, title: "小池", author: "杨万里", dynasty: "宋", tags: ["夏天", "自然"], content: "泉眼无声惜细流，树阴照水爱晴柔。\n小荷才露尖尖角，早有蜻蜓立上头。" }
-        ];
+        // ---------- 诗词数据库----------
+// ---------- 从API获取海量诗词数据 ----------
+// ---------- 页面切换功能 ----------
+// 更新学习小结数据（示例）
+function updateSummary(learned = 7, practiced = 32, accuracy = 85) {
+    document.getElementById('statLearned').innerText = learned;
+    document.getElementById('statPracticed').innerText = practiced;
+    document.getElementById('statAccuracy').innerText = accuracy + '%';
+    document.getElementById('progressBar').style.width = accuracy + '%';
+    document.getElementById('progressBar').innerText = `本月进度 ${accuracy}%`;
+}
+function startPracticeFromNav() {
+    // 简单演示，固定使用第一首诗的第一句
+    const poem = poems[0] || { title: '静夜思', content: '床前明月光，疑是地上霜。\n举头望明月，低头思故乡。' };
+    const firstLine = poem.content.split('\n')[0];
+    
+    // 检查浏览器是否支持语音识别
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('您的浏览器不支持语音识别，请使用Chrome浏览器');
+        return;
+    }
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'zh-CN';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    recognition.start();
+    
+    alert(`请朗读：${firstLine}`);
+    
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        const similarity = compareChinese(transcript, firstLine);
+        
+        if (similarity > 0.7) {
+            alert(`✅ 很棒！你读的是：“${transcript}”\n准确率：${Math.round(similarity*100)}%`);
+        } else {
+            alert(`🔊 你读的是：“${transcript}”\n原句是：“${firstLine}”\n准确率：${Math.round(similarity*100)}%，再试一次吧！`);
+        }
+    };
+    
+    recognition.onerror = function() {
+        alert('语音识别失败，请确保已授予麦克风权限');
+    };
+}
+function switchPage(pageName) {
+    // 隐藏所有页面
+    document.querySelectorAll('.page').forEach(page => {
+        page.style.display = 'none';
+    });
+    
+    // 显示选中的页面
+    document.getElementById('page' + pageName.charAt(0).toUpperCase() + pageName.slice(1)).style.display = 'block';
+    
+    // 更新底部导航高亮样式
+    // 先移除所有导航图标的激活类（我们可以用颜色区分）
+    document.querySelectorAll('.nav-bar .col-3 i').forEach(icon => {
+        icon.style.color = '#aaa'; // 默认灰色
+    });
+    document.querySelectorAll('.nav-bar .col-3 small').forEach(small => {
+        small.style.color = '#aaa';
+    });
+    
+    // 给当前选中的图标加亮
+    let activeIcon, activeSmall;
+    if (pageName === 'home') {
+        activeIcon = document.getElementById('navHomeIcon');
+    } else if (pageName === 'practice') {
+        activeIcon = document.getElementById('navPracticeIcon');
+    } else if (pageName === 'summary') {
+        activeIcon = document.getElementById('navSummaryIcon');
+    } else if (pageName === 'profile') {
+        activeIcon = document.getElementById('navProfileIcon');
+    }
+    if (activeIcon) {
+        activeIcon.style.color = '#2d3e50'; // 深蓝色
+        activeIcon.nextElementSibling.style.color = '#2d3e50';
+    }
+}
 
-        // 当前显示的诗词（默认全部）
-        let currentPoems = poems;
+// 初始化：默认显示首页
+window.onload = function() {
+    switchPage('home');
+    // 原有的诗词渲染等函数继续执行
+    // 如果之前有 renderPoems 等调用，可以保留
+};
+let poems = []; // 先声明空数组
+let currentPoems = []; // 声明currentPoems变量
 
+// 页面加载时自动获取数据
+fetch('https://apipoetry.vercel.app/v1/ci/index?page=1&per_page=200')
+  .then(response => response.json())
+  .then(data => {
+    // 把API返回的数据转换成我们需要的格式
+    poems = data.data.map(item => ({
+      id: item.id,
+      title: item.title,
+      author: item.author,
+      dynasty: '宋', // API返回的可能没有朝代，可以自己补充
+      tags: ['宋词'], // 可以加个默认标签
+      content: item.content.replace(/\|/g, '\n') // 有些API用|分隔句子，换成换行
+    }));
+    
+    // 获取数据后渲染页面
+    currentPoems = poems;
+    renderPoems(poems);
+  })
+  .catch(error => {
+    console.error('获取诗词失败', error);
+    // 如果API失败，可以加载本地备用数据
+    loadLocalPoems();
+  });
         // 渲染诗词列表
         function renderPoems(poemsToRender) {
             const container = document.getElementById('poemList');
@@ -165,8 +364,7 @@
             container.innerHTML = html;
         }
 
-        // 初始渲染
-        renderPoems(poems);
+
 
         // ---------- 搜索功能（实时检索）----------
         document.getElementById('searchInput').addEventListener('input', function(e) {
@@ -288,6 +486,38 @@
         window.speechSynthesis.onvoiceschanged = function() {
             window.speechSynthesis.getVoices();
         };
+
+        // 本地备用数据加载函数
+        function loadLocalPoems() {
+            poems = [
+                {
+                    id: 1,
+                    title: '静夜思',
+                    author: '李白',
+                    dynasty: '唐',
+                    tags: ['唐诗', '思乡'],
+                    content: '床前明月光，疑是地上霜。\n举头望明月，低头思故乡。'
+                },
+                {
+                    id: 2,
+                    title: '春晓',
+                    author: '孟浩然',
+                    dynasty: '唐',
+                    tags: ['唐诗', '春天'],
+                    content: '春眠不觉晓，处处闻啼鸟。\n夜来风雨声，花落知多少。'
+                },
+                {
+                    id: 3,
+                    title: '登鹳雀楼',
+                    author: '王之涣',
+                    dynasty: '唐',
+                    tags: ['唐诗', '山水'],
+                    content: '白日依山尽，黄河入海流。\n欲穷千里目，更上一层楼。'
+                }
+            ];
+            currentPoems = poems;
+            renderPoems(poems);
+        }
     </script>
 </body>
 </html>
